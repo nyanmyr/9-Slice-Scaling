@@ -4,11 +4,8 @@
 
 void playScene(Scene scene) {
     switch (scene) {
-    case Scene::MENU:
-        menuScene();
-        break;
-    case Scene::PLAYING:
-        playingScene();
+    case Scene::START:
+        startScene();
         break;
     default:
         throw std::runtime_error("Scene does not exist.");

@@ -28,13 +28,6 @@ namespace Enum
 		TEXTURE_PLACEHOLDER,
 	};
 
-	enum class ButtonState
-	{
-		IDLE,
-		HOVERED,
-		CLICKED,
-	};
-
 	enum class OriginPoint
 	{
 		LEFT,

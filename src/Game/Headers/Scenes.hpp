@@ -5,13 +5,11 @@
 
 enum class Scene
 {
-	MENU,
-	PLAYING,
+	START
 };
 
 void playScene(Scene scene);
-void menuScene();
-void playingScene();
+void startScene();
 
 
 #endif

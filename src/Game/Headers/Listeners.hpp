@@ -14,12 +14,6 @@ namespace Listener
 	void setTextSize(Event::SetTextSize event);
 	void setTextColor(Event::SetTextColor event);
 	void setTextOrigin(Event::SetTextOrigin event);
-
-	void clickedButton(Event::MouseClick event);
-	void hoverButton(Event::MouseMoved event);
-	void idleButton(Event::MouseMoved event);
-
-	void playNextScene(Event::PlayScene event);
 }
 
 #endif

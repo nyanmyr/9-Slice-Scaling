@@ -53,15 +53,6 @@ namespace Event
 		Component::Text& text;
 	};
 
-	struct MouseClick
-	{
-		const sf::Vector2f pos;
-	};
-	struct MouseMoved
-	{
-		const sf::Vector2f pos;
-	};
-
 	struct PlayScene
 	{
 		const Scene next;

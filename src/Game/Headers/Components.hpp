@@ -34,16 +34,6 @@ namespace Component {
 		Enum::OriginPoint data;
 	};
 
-	struct Button
-	{
-		bool enabled = true;
-		double hoverAnimationDuration = 0.0;
-		double idleAnimationDuration = 0.0;
-		double clickedAnimationDuration = 0.0;
-		double timer = 0.0;
-		Enum::ButtonState state = Enum::ButtonState::IDLE;
-	};
-
 	struct Text
 	{
 		std::optional<sf::Text> box{};
@@ -55,7 +45,7 @@ namespace Component {
 
 	struct NextScene
 	{
-		Scene next = Scene::MENU;
+		Scene next = Scene::START;
 	};
 
 	struct ZIndex
@@ -75,17 +65,6 @@ namespace Component {
 	};
 
 	struct Acceleration
-	{
-		double x = 0.0;
-		double y = 0.0;
-	};
-
-	struct PlayerController
-	{
-		bool enabled = true;
-	};
-
-	struct Drag
 	{
 		double x = 0.0;
 		double y = 0.0;
