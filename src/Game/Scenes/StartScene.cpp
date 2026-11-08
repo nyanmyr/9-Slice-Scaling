@@ -7,6 +7,158 @@
 #include "../src/Game/Headers/GameManager.hpp"
 #include "../src/Game/Headers/Scenes.hpp"
 
+class SlicedSprite : public sf::Drawable, public sf::Transformable
+{
+private:
+	sf::Texture texture;
+	std::optional<sf::Sprite> topLeft;
+	std::optional<sf::Sprite> top;
+	std::optional<sf::Sprite> topRight;
+	std::optional<sf::Sprite> left;
+	std::optional<sf::Sprite> middle;
+	std::optional<sf::Sprite> right;
+	std::optional<sf::Sprite> bottomLeft;
+	std::optional<sf::Sprite> bottom;
+	std::optional<sf::Sprite> bottomRight;
+
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+	{
+		states.transform *= getTransform();
+
+		target.draw(*topLeft, states);
+		target.draw(*top, states);
+		target.draw(*topRight, states);
+		target.draw(*left, states);
+		target.draw(*middle, states);
+		target.draw(*right, states);
+		target.draw(*bottomLeft, states);
+		target.draw(*bottom, states);
+		target.draw(*bottomRight, states);
+	}
+
+	void setDefaults
+	(
+		const sf::IntRect& rect,
+		std::optional<sf::Sprite>& sprite
+	)
+	{
+		sprite->setPosition
+		(
+			sf::Vector2f
+			{
+				static_cast<float>(rect.position.x),
+				static_cast<float>(rect.position.y)
+			}
+		);
+
+		sprite->setOrigin
+		(
+			sf::Vector2f
+			{
+				static_cast<float>(texture.getSize().x * 0.5f),
+				static_cast<float>(texture.getSize().y * 0.5f),
+			}
+		);
+
+		sprite->setTextureRect
+		(
+			sf::IntRect
+			{
+				sf::Vector2i
+				{
+					rect.position.x,
+					rect.position.y,
+				},
+				sf::Vector2i
+				{
+					rect.size.x,
+					rect.size.y,
+				}
+			}
+		);
+	}
+
+public:
+	SlicedSprite
+	(
+		const sf::Texture& texture,
+		const sf::IntRect& topLeftRect,
+		const sf::IntRect& topRect,
+		const sf::IntRect& topRightRect,
+		const sf::IntRect& leftRect,
+		const sf::IntRect& middleRect,
+		const sf::IntRect& rightRect,
+		const sf::IntRect& bottomLeftRect,
+		const sf::IntRect& bottomRect,
+		const sf::IntRect& bottomRightRect
+	) : texture(texture)
+	{
+		topLeft.emplace(texture);
+		top.emplace(texture);
+		topRight.emplace(texture);
+		left.emplace(texture);
+		middle.emplace(texture);
+		right.emplace(texture);
+		bottomLeft.emplace(texture);
+		bottom.emplace(texture);
+		bottomRight.emplace(texture);
+
+		setDefaults
+		(
+			topLeftRect,
+			topLeft
+		);
+
+		setDefaults
+		(
+			topRect,
+			top
+		);
+
+		setDefaults
+		(
+			topRightRect,
+			topRight
+		);
+
+		setDefaults
+		(
+			leftRect,
+			left
+		);
+
+		setDefaults
+		(
+			middleRect,
+			middle
+		);
+
+		setDefaults
+		(
+			rightRect,
+			right
+		);
+
+		setDefaults
+		(
+			bottomLeftRect,
+			bottomLeft
+		);
+
+		setDefaults
+		(
+			bottomRect,
+			bottom
+		);
+
+		setDefaults
+		(
+			bottomRightRect,
+			bottomRight
+		);
+	}
+};
+
 void startScene()
 {
 
@@ -27,29 +179,9 @@ void startScene()
 
 	sf::Texture texture(SPRITES_PATH "nacre_button.png");
 
-	std::optional<sf::Sprite> topLeft;
-	topLeft.emplace(texture);
-
-	topLeft->setPosition
+	SlicedSprite splicedSprite
 	(
-		sf::Vector2f
-		{
-			0.f,
-			0.f
-		}
-	);
-
-	topLeft->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(topLeft->getTextureRect().getCenter().x),
-			static_cast<float>(topLeft->getTextureRect().getCenter().y),
-		}
-	);
-
-	topLeft->setTextureRect
-	(
+		texture,
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -62,32 +194,7 @@ void startScene()
 				60,
 				60,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> top;
-	top.emplace(texture);
-
-	top->setPosition
-	(
-		sf::Vector2f
-		{
-			60.f,
-			0.f
-		}
-	);
-
-	top->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(top->getTextureRect().getCenter().x),
-			static_cast<float>(top->getTextureRect().getCenter().y),
-		}
-		);
-
-	top->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -100,32 +207,7 @@ void startScene()
 				392,
 				60,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> topRight;
-	topRight.emplace(texture);
-
-	topRight->setPosition
-	(
-		sf::Vector2f
-		{
-			452.f,
-			0.f
-		}
-	);
-
-	topRight->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(topRight->getTextureRect().getCenter().x),
-			static_cast<float>(topRight->getTextureRect().getCenter().y),
-		}
-		);
-
-	topRight->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -138,32 +220,7 @@ void startScene()
 				60,
 				60,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> left;
-	left.emplace(texture);
-
-	left->setPosition
-	(
-		sf::Vector2f
-		{
-			0.f,
-			60.f
-		}
-	);
-
-	left->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(left->getTextureRect().getCenter().x),
-			static_cast<float>(left->getTextureRect().getCenter().y),
-		}
-	);
-
-	left->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -176,32 +233,7 @@ void startScene()
 				60,
 				392,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> middle;
-	middle.emplace(texture);
-
-	middle->setPosition
-	(
-		sf::Vector2f
-		{
-			60.f,
-			60.f
-		}
-	);
-
-	middle->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(middle->getTextureRect().getCenter().x),
-			static_cast<float>(middle->getTextureRect().getCenter().y),
-		}
-	);
-
-	middle->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -214,32 +246,7 @@ void startScene()
 				392,
 				392,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> right;
-	right.emplace(texture);
-
-	right->setPosition
-	(
-		sf::Vector2f
-		{
-			452.f,
-			60.f
-		}
-	);
-
-	right->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(right->getTextureRect().getCenter().x),
-			static_cast<float>(right->getTextureRect().getCenter().y),
-		}
-		);
-
-	right->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -252,32 +259,7 @@ void startScene()
 				60,
 				392,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> bottomLeft;
-	bottomLeft.emplace(texture);
-
-	bottomLeft->setPosition
-	(
-		sf::Vector2f
-		{
-			0.f,
-			452.f
-		}
-	);
-
-	bottomLeft->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(bottomLeft->getTextureRect().getCenter().x),
-			static_cast<float>(bottomLeft->getTextureRect().getCenter().y),
-		}
-		);
-
-	bottomLeft->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -290,32 +272,7 @@ void startScene()
 				60,
 				60,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> bottom;
-	bottom.emplace(texture);
-
-	bottom->setPosition
-	(
-		sf::Vector2f
-		{
-			60.f,
-			452.f
-		}
-	);
-
-	bottom->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(bottom->getTextureRect().getCenter().x),
-			static_cast<float>(bottom->getTextureRect().getCenter().y),
-		}
-		);
-
-	bottom->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -328,32 +285,7 @@ void startScene()
 				392,
 				60,
 			}
-		}
-	);
-
-	std::optional<sf::Sprite> bottomRight;
-	bottomRight.emplace(texture);
-
-	bottomRight->setPosition
-	(
-		sf::Vector2f
-		{
-			452.f,
-			452.f
-		}
-	);
-
-	bottomRight->setOrigin
-	(
-		sf::Vector2f
-		{
-			static_cast<float>(bottomRight->getTextureRect().getCenter().x),
-			static_cast<float>(bottomRight->getTextureRect().getCenter().y),
-		}
-		);
-
-	bottomRight->setTextureRect
-	(
+		},
 		sf::IntRect
 		{
 			sf::Vector2i
@@ -398,15 +330,7 @@ void startScene()
 			renderQueue
 		);
 
-		Asset::window().draw(*topLeft);
-		Asset::window().draw(*top);
-		Asset::window().draw(*topRight);
-		Asset::window().draw(*left);
-		Asset::window().draw(*middle);
-		Asset::window().draw(*right);
-		Asset::window().draw(*bottomLeft);
-		Asset::window().draw(*bottom);
-		Asset::window().draw(*bottomRight);
+		Asset::window().draw(splicedSprite);
 
 		Asset::window().display();
 	}
