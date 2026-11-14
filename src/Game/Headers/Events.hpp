@@ -28,6 +28,11 @@ namespace Event
 		Component::Sprite& sprite;
 		const Component::Singleton::TexturesContainer& loadedTextures;
 	};
+	struct LoadSlicedSprite
+	{
+		Entity target = NULL_ENTITY;
+		const Component::Singleton::TexturesContainer& loadedTextures;
+	};
 
 	struct SetTextString
 	{

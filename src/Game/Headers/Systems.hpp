@@ -13,6 +13,7 @@ namespace Start
 	void setSpriteOrigin();
 	void loadTextures(Component::Singleton::TexturesContainer& loadedTextures);
 	void loadSprites(const Component::Singleton::TexturesContainer& loadedTextures);
+	void loadSlicedSprites(const Component::Singleton::TexturesContainer& loadedTextures);
 	void setColor();
 }
 

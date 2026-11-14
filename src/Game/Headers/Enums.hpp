@@ -26,6 +26,8 @@ namespace Enum
 	enum class Texture
 	{
 		TEXTURE_PLACEHOLDER,
+		NACRE_BUTTON,
+		NACRE_SPLICING_TEST,
 	};
 
 	enum class OriginPoint

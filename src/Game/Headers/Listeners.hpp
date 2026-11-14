@@ -9,6 +9,7 @@ namespace Listener
 	void setSpriteOrigin(Event::SetSpriteOrigin event);
 	void setColor(Event::SetColor event);
 	void loadSprite(Event::LoadSprite event);
+	void loadSlicedSprite(Event::LoadSlicedSprite event);
 
 	void setTextString(Event::SetTextString event);
 	void setTextSize(Event::SetTextSize event);

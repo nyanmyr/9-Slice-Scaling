@@ -90,9 +90,17 @@ namespace Listener
 	{
 		if (event.target == NULL_ENTITY) throw std::runtime_error("Error: null entity");
 
-		auto& sprite = nc().getComponent<Component::Sprite>(event.target);
+		if (nc().getComponentArray<Component::Sprite>()->hasData(event.target))
+		{
+			auto& sprite = nc().getComponent<Component::Sprite>(event.target);
+			sprite.body->setColor(event.color.data);
+		}
 
-		sprite.body->setColor(event.color.data);
+		if (nc().getComponentArray<Component::SlicedSprite>()->hasData(event.target))
+		{
+			auto& slicedSprite = nc().getComponent<Component::SlicedSprite>(event.target);
+			// TODO: implement coloring
+		}
 	}
 	void loadSprite(Event::LoadSprite event)
 	{
@@ -114,6 +122,55 @@ namespace Listener
 				transform.width / event.sprite.body->getGlobalBounds().size.x,
 				transform.height / event.sprite.body->getGlobalBounds().size.y
 			)
+		);
+	}
+	void loadSlicedSprite(Event::LoadSlicedSprite event)
+	{
+		if (event.target == NULL_ENTITY) throw std::runtime_error("Error: null entity");
+
+		auto& texture = nc().getComponent<Component::Texture>(event.target);
+		auto& transform = nc().getComponent<Component::Transform>(event.target);
+		auto& splicedSpriteRects = nc().getComponent<Component::SlicedSpriteRects>(event.target);
+
+		if (event.loadedTextures.map.find(texture.data) == event.loadedTextures.map.end())
+		{
+			throw std::runtime_error("Texture has not been loaded.");
+		}
+
+		nc().addComponent
+		(
+			event.target,
+			Component::SlicedSprite{}
+		);
+
+		auto& slicedSprite = nc().getComponent<Component::SlicedSprite>(event.target);
+
+		sf::Texture test(event.loadedTextures.map.at(texture.data));
+
+		slicedSprite.body = 
+		(
+			Transformable::SlicedSprite
+			{
+				event.loadedTextures.map.at(texture.data),
+				splicedSpriteRects.topLeft,
+				splicedSpriteRects.top,
+				splicedSpriteRects.topRight,
+				splicedSpriteRects.left,
+				splicedSpriteRects.middle,
+				splicedSpriteRects.right,
+				splicedSpriteRects.bottomLeft,
+				splicedSpriteRects.bottom,
+				splicedSpriteRects.bottomRight
+			}
+		);
+			
+		slicedSprite.body->setSize
+		(
+			sf::Vector2f
+			{
+				static_cast<float>(transform.width),
+				static_cast<float>(transform.height)
+			}
 		);
 	}
 

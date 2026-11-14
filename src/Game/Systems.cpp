@@ -57,10 +57,12 @@ namespace Start
 	{
 		const auto& originOffsetsArray = nc().getComponentArray<Component::OriginOffsets>();
 		const auto& originPointArray = nc().getComponentArray<Component::OriginPoint>();
+		const auto& spriteArray = nc().getComponentArray<Component::Sprite>();
 
 		for (auto& [entity, origin] : originOffsetsArray->getAll())
 		{
-			if (!originPointArray->hasData(entity)) continue;
+			if (!originPointArray->hasData(entity) ||
+				!spriteArray->hasData(entity)) continue;
 
 			auto& originPoint = originPointArray->getData(entity);
 
@@ -74,6 +76,8 @@ namespace Start
 	void loadTextures(Component::Singleton::TexturesContainer& loadedTextures)
 	{
 		loadedTextures.map.emplace(Enum::Texture::TEXTURE_PLACEHOLDER, sf::Texture(SPRITES_PATH "placeholder_texture.jpeg"));
+		loadedTextures.map.emplace(Enum::Texture::NACRE_BUTTON, sf::Texture(SPRITES_PATH "nacre_button.png"));
+		loadedTextures.map.emplace(Enum::Texture::NACRE_SPLICING_TEST, sf::Texture(SPRITES_PATH "nacre_splicing_test.png"));
 	}
 	void loadSprites(const Component::Singleton::TexturesContainer& loadedTextures)
 	{
@@ -85,6 +89,19 @@ namespace Start
 				(
 					Event::LoadSprite
 					{ entity, sprite, loadedTextures }
+				);
+		}
+	}
+	void loadSlicedSprites(const Component::Singleton::TexturesContainer& loadedTextures)
+	{
+		const auto& slicedSpriteRectsArray = nc().getComponentArray<Component::SlicedSpriteRects>();
+
+		for (auto& [entity, slicedSprite] : slicedSpriteRectsArray->getAll())
+		{
+			nc().call<Event::LoadSlicedSprite>
+				(
+					Event::LoadSlicedSprite
+					{ entity, loadedTextures }
 				);
 		}
 	}
@@ -173,6 +190,7 @@ namespace Render
 	)
 	{
 		const auto& spriteArray = nc().getComponentArray<Component::Sprite>();
+		const auto& slicedSpriteArray = nc().getComponentArray<Component::SlicedSprite>();
 		const auto& positionArray = nc().getComponentArray<Component::Position>();
 		const auto& textArray = nc().getComponentArray<Component::Text>();
 
@@ -217,6 +235,21 @@ namespace Render
 					)
 				);
 				window.draw(text.box.value());
+			}
+
+			if (slicedSpriteArray->hasData(popped))
+			{
+				auto& slicedSprite = slicedSpriteArray->getData(popped);
+
+				slicedSprite.body->setPosition
+				(
+					sf::Vector2f
+					(
+						pos.x,
+						pos.y
+					)
+				);
+				window.draw(slicedSprite.body.value());
 			}
 
 			renderQueue.pop();

@@ -15,6 +15,8 @@ int main()
 	nc().registerComponent<Component::Velocity>();
 	nc().registerComponent<Component::Acceleration>();
 	nc().registerComponent<Component::Sprite>();
+	nc().registerComponent<Component::SlicedSprite>();
+	nc().registerComponent<Component::SlicedSpriteRects>();
 	nc().registerComponent<Component::Texture>();
 	nc().registerComponent<Component::Color>();
 
@@ -22,6 +24,7 @@ int main()
 	nc().registerEvent<Event::SetSpriteOrigin>();
 	nc().registerEvent<Event::SetColor>();
 	nc().registerEvent<Event::LoadSprite>();
+	nc().registerEvent<Event::LoadSlicedSprite>();
 	nc().registerEvent<Event::SetTextString>();
 	nc().registerEvent<Event::SetTextSize>();
 	nc().registerEvent<Event::SetTextColor>();
@@ -31,6 +34,7 @@ int main()
 	nc().listen<Event::SetSpriteOrigin>(Listener::setSpriteOrigin);
 	nc().listen<Event::SetColor>(Listener::setColor);
 	nc().listen<Event::LoadSprite>(Listener::loadSprite);
+	nc().listen<Event::LoadSlicedSprite>(Listener::loadSlicedSprite);
 	nc().listen<Event::SetTextString>(Listener::setTextString);
 	nc().listen<Event::SetTextSize>(Listener::setTextSize);
 	nc().listen<Event::SetTextColor>(Listener::setTextColor);

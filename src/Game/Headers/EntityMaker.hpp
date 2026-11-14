@@ -10,7 +10,16 @@
 
 namespace EntityMaker
 {
-
+	Entity slicedSprite
+	(
+		const Component::Color& color,
+		const Component::ZIndex& zIndex,
+		const Component::Texture& texture,
+		const Component::Position& position,
+		const Component::Transform& transform,
+		const Component::OriginPoint& originPoint,
+		const Component::SlicedSpriteRects& slicedSpriteRects
+	);
 }
 
 #endif
