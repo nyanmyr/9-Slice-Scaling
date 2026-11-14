@@ -230,8 +230,8 @@ public:
 	// TODO: below minimum size case
 	void setSize(const sf::Vector2f& size)
 	{
-		std::println("New SizeX: {}", size.x);
-		std::println("New SizeY: {}", size.y);
+		//std::println("New SizeX: {}", size.x);
+		//std::println("New SizeY: {}", size.y);
 
 		if (size.x != texture.getSize().x * this->getScale().x)
 		{
@@ -278,8 +278,8 @@ public:
 			float bottomRightSizeX = this->getScale().x * (bottomRightRect.size.x * bottomRight->getScale().x);
 			float rightSizeX = this->getScale().x * (rightRect.size.x * right->getScale().x);
 
-			std::println("test1: {}", newMiddleSizeX);
-			std::println("topLeftSizeX: {}", topLeftSizeX);
+			//std::println("test1: {}", newMiddleSizeX);
+			//std::println("topLeftSizeX: {}", topLeftSizeX);
 
 			topLeft->setPosition
 			(
@@ -330,12 +330,104 @@ public:
 				}
 			);
 
-			std::println("Width Resized!");
+			//std::println("Width Resized!");
 		}
 
 		if (size.y != texture.getSize().y * this->getScale().y)
 		{
-			std::println("Height Resized!");
+			// top, middle, bottom
+			float newLeftY = size.y * ((1.f + this->getScale().y) / leftRect.size.y);
+			float newMiddleY = size.y * ((1.f + this->getScale().y) / middleRect.size.y);
+			float newRightY = size.y * ((1.f + this->getScale().y) / rightRect.size.y);
+
+			//std::println("New MiddleX: {}", newMiddleX);
+
+			left->setScale
+			(
+				sf::Vector2f
+				{
+					left->getScale().x,
+					newLeftY
+				}
+			);
+
+			middle->setScale
+			(
+				sf::Vector2f
+				{
+					middle->getScale().x,
+					newMiddleY
+				}
+			);
+
+			right->setScale
+			(
+				sf::Vector2f
+				{
+					right->getScale().x,
+					newRightY
+				}
+			);
+
+			float newMiddleSizeY = this->getScale().y * (middleRect.size.y * middle->getScale().y);
+
+			float topLeftSizeY = this->getScale().y * (topLeftRect.size.y * topLeft->getScale().y);
+			float topRightSizeY = this->getScale().y * (topRightRect.size.y * topRight->getScale().y);
+			float topSizeY = this->getScale().y * (topRect.size.y * top->getScale().y);
+			float bottomLeftSizeY = this->getScale().y * (bottomLeftRect.size.y * bottomLeft->getScale().y);
+			float bottomRightSizeY = this->getScale().y * (bottomRightRect.size.y * bottomRight->getScale().y);
+			float bottomSizeY = this->getScale().y * (bottomRect.size.y * bottom->getScale().y);
+
+			topLeft->setPosition
+			(
+				sf::Vector2f
+				{
+					topLeft->getPosition().x,
+					-newMiddleSizeY - topLeftSizeY
+				}
+			);
+			topRight->setPosition
+			(
+				sf::Vector2f
+				{
+					topRight->getPosition().x,
+					-newMiddleSizeY - topRightSizeY
+				}
+			);
+			top->setPosition
+			(
+				sf::Vector2f
+				{
+					top->getPosition().x,
+					-newMiddleSizeY - topSizeY
+				}
+			);
+			bottomLeft->setPosition
+			(
+				sf::Vector2f
+				{
+					bottomLeft->getPosition().x,
+					newMiddleSizeY + bottomLeftSizeY
+				}
+			);
+			bottomRight->setPosition
+			(
+				sf::Vector2f
+				{
+					bottomRight->getPosition().x,
+					newMiddleSizeY + bottomRightSizeY
+				}
+			);
+			bottom->setPosition
+			(
+				sf::Vector2f
+				{
+					bottom->getPosition().x,
+					newMiddleSizeY + bottomSizeY
+				}
+			);
+
+			//std::println("Height Resized!");
 		}
 	}
 };
@@ -491,24 +583,15 @@ void startScene()
 		}
 	);
 
-	std::println("SplicedSprite SizeX: {}", splicedSprite.getSize().x);
-	std::println("SplicedSprite SizeY: {}", splicedSprite.getSize().y);
-
-	//splicedSprite.setSize
-	//(
-	//	sf::Vector2f
-	//	{
-	//		splicedSprite.,
-	//		0.5f
-	//	}
-	//);
+	//std::println("SplicedSprite SizeX: {}", splicedSprite.getSize().x);
+	//std::println("SplicedSprite SizeY: {}", splicedSprite.getSize().y);
 
 	splicedSprite.setSize
 	(
 		sf::Vector2f
 		{
 			500.f,
-			300.f
+			500.f
 		}
 	);
 
