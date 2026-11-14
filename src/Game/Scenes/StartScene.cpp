@@ -11,6 +11,7 @@ class SlicedSprite : public sf::Drawable, public sf::Transformable
 {
 private:
 	sf::Texture texture;
+
 	std::optional<sf::Sprite> topLeft;
 	std::optional<sf::Sprite> top;
 	std::optional<sf::Sprite> topRight;
@@ -20,6 +21,16 @@ private:
 	std::optional<sf::Sprite> bottomLeft;
 	std::optional<sf::Sprite> bottom;
 	std::optional<sf::Sprite> bottomRight;
+
+	sf::IntRect topLeftRect;
+	sf::IntRect topRect;
+	sf::IntRect topRightRect;
+	sf::IntRect leftRect;
+	sf::IntRect middleRect;
+	sf::IntRect rightRect;
+	sf::IntRect bottomLeftRect;
+	sf::IntRect bottomRect;
+	sf::IntRect bottomRightRect;
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override
 	{
@@ -39,24 +50,18 @@ private:
 	void setDefaults
 	(
 		const sf::IntRect& rect,
+		const sf::Vector2f& localPos,
 		std::optional<sf::Sprite>& sprite
 	)
 	{
-		sprite->setPosition
-		(
-			sf::Vector2f
-			{
-				static_cast<float>(rect.position.x),
-				static_cast<float>(rect.position.y)
-			}
-		);
+		sprite->setPosition(localPos);
 
 		sprite->setOrigin
 		(
 			sf::Vector2f
 			{
-				static_cast<float>(texture.getSize().x * 0.5f),
-				static_cast<float>(texture.getSize().y * 0.5f),
+				static_cast<float>(rect.size.x * 0.5f),
+				static_cast<float>(rect.size.y * 0.5f),
 			}
 		);
 
@@ -91,71 +96,247 @@ public:
 		const sf::IntRect& bottomLeftRect,
 		const sf::IntRect& bottomRect,
 		const sf::IntRect& bottomRightRect
-	) : texture(texture)
+	)
+		: texture(texture),
+		topLeftRect(topLeftRect),
+		topRect(topRect),
+		topRightRect(topRightRect),
+		leftRect(leftRect),
+		middleRect(middleRect),
+		rightRect(rightRect),
+		bottomLeftRect(bottomLeftRect),
+		bottomRect(bottomRect),
+		bottomRightRect(bottomRightRect)
 	{
-		topLeft.emplace(texture);
-		top.emplace(texture);
-		topRight.emplace(texture);
-		left.emplace(texture);
-		middle.emplace(texture);
-		right.emplace(texture);
-		bottomLeft.emplace(texture);
-		bottom.emplace(texture);
-		bottomRight.emplace(texture);
+		topLeft.emplace(this->texture);
+		top.emplace(this->texture);
+		topRight.emplace(this->texture);
+		left.emplace(this->texture);
+		middle.emplace(this->texture);
+		right.emplace(this->texture);
+		bottomLeft.emplace(this->texture);
+		bottom.emplace(this->texture);
+		bottomRight.emplace(this->texture);
 
 		setDefaults
 		(
-			topLeftRect,
+			this->topLeftRect,
+			sf::Vector2f
+			{
+				-((texture.getSize().x * 0.5f) - (topLeftRect.size.x * 0.5f)),
+				-((texture.getSize().y * 0.5f) - (topLeftRect.size.y * 0.5f)),
+			},
 			topLeft
 		);
 
 		setDefaults
 		(
-			topRect,
+			this->topRect,
+			sf::Vector2f
+			{
+				0.f,
+				-((texture.getSize().y * 0.5f) - (topLeftRect.size.y * 0.5f)),
+			},
 			top
 		);
 
 		setDefaults
 		(
-			topRightRect,
+			this->topRightRect,
+			sf::Vector2f
+			{
+				(texture.getSize().x * 0.5f) - (topLeftRect.size.x * 0.5f),
+				-((texture.getSize().y * 0.5f) - (topLeftRect.size.y * 0.5f)),
+			},
 			topRight
 		);
 
 		setDefaults
 		(
-			leftRect,
+			this->leftRect,
+			sf::Vector2f
+			{
+				-((texture.getSize().x * 0.5f) - (topLeftRect.size.x * 0.5f)),
+				0.f,
+			},
 			left
 		);
 
 		setDefaults
 		(
-			middleRect,
+			this->middleRect,
+			sf::Vector2f
+			{
+				0.f,
+				0.f,
+			},
 			middle
 		);
 
 		setDefaults
 		(
-			rightRect,
+			this->rightRect,
+			sf::Vector2f
+			{
+				(texture.getSize().x * 0.5f) - (topLeftRect.size.x * 0.5f),
+				0.f,
+			},
 			right
 		);
 
 		setDefaults
 		(
-			bottomLeftRect,
+			this->bottomLeftRect,
+			sf::Vector2f
+			{
+				-((texture.getSize().x * 0.5f) - (topLeftRect.size.x * 0.5f)),
+				(texture.getSize().y * 0.5f) - (topLeftRect.size.y * 0.5f),
+			},
 			bottomLeft
 		);
 
 		setDefaults
 		(
-			bottomRect,
+			this->bottomRect,
+			sf::Vector2f
+			{
+				0.f,
+				(texture.getSize().y * 0.5f) - (topLeftRect.size.y * 0.5f),
+			},
 			bottom
 		);
 
 		setDefaults
 		(
-			bottomRightRect,
+			this->bottomRightRect,
+			sf::Vector2f
+			{
+				(texture.getSize().x * 0.5f) - (topLeftRect.size.x * 0.5f),
+				(texture.getSize().y * 0.5f) - (topLeftRect.size.y * 0.5f),
+			},
 			bottomRight
 		);
+	}
+
+	sf::Vector2f getSize() const
+	{
+		return sf::Vector2f
+		{
+			texture.getSize().x * this->getScale().x,
+			texture.getSize().y * this->getScale().y
+		};
+	}
+
+	// TODO: below minimum size case
+	void setSize(const sf::Vector2f& size)
+	{
+		std::println("New SizeX: {}", size.x);
+		std::println("New SizeY: {}", size.y);
+
+		if (size.x != texture.getSize().x * this->getScale().x)
+		{
+			// top, middle, bottom
+			float newTopX = size.x * ((1.f + this->getScale().x) / topRect.size.x);
+			float newMiddleX = size.x * ((1.f + this->getScale().x) / middleRect.size.x);
+			float newBottomX = size.x * ((1.f + this->getScale().x) / bottomRect.size.x);
+
+			//std::println("New MiddleX: {}", newMiddleX);
+
+			top->setScale
+			(
+				sf::Vector2f
+				{
+					newTopX,
+					top->getScale().y,
+				}
+			);
+
+			middle->setScale
+			(
+				sf::Vector2f
+				{
+					newMiddleX,
+					middle->getScale().y,
+				}
+			);
+
+			bottom->setScale
+			(
+				sf::Vector2f
+				{
+					newBottomX,
+					bottom->getScale().y,
+				}
+			);
+
+			float newMiddleSizeX = this->getScale().x * (middleRect.size.x * middle->getScale().x);
+
+			float topLeftSizeX = this->getScale().x * (topLeftRect.size.x * topLeft->getScale().x);
+			float topRightSizeX = this->getScale().x * (topRightRect.size.x * topRight->getScale().x);
+			float leftSizeX = this->getScale().x * (leftRect.size.x * left->getScale().x);
+			float bottomLeftSizeX = this->getScale().x * (bottomLeftRect.size.x * bottomLeft->getScale().x);
+			float bottomRightSizeX = this->getScale().x * (bottomRightRect.size.x * bottomRight->getScale().x);
+			float rightSizeX = this->getScale().x * (rightRect.size.x * right->getScale().x);
+
+			std::println("test1: {}", newMiddleSizeX);
+			std::println("topLeftSizeX: {}", topLeftSizeX);
+
+			topLeft->setPosition
+			(
+				sf::Vector2f
+				{
+					-newMiddleSizeX - topLeftSizeX,
+					topLeft->getPosition().y,
+				}
+			);
+			topRight->setPosition
+			(
+				sf::Vector2f
+				{
+					newMiddleSizeX + topRightSizeX,
+					topRight->getPosition().y,
+				}
+			);
+			left->setPosition
+			(
+				sf::Vector2f
+				{
+					-newMiddleSizeX - leftSizeX,
+					left->getPosition().y,
+				}
+			);
+			bottomLeft->setPosition
+			(
+				sf::Vector2f
+				{
+					-newMiddleSizeX - bottomLeftSizeX,
+					bottomLeft->getPosition().y,
+				}
+			);
+			bottomRight->setPosition
+			(
+				sf::Vector2f
+				{
+					newMiddleSizeX + bottomRightSizeX,
+					bottomRight->getPosition().y,
+				}
+			);
+			right->setPosition
+			(
+				sf::Vector2f
+				{
+					newMiddleSizeX + rightSizeX,
+					right->getPosition().y,
+				}
+			);
+
+			std::println("Width Resized!");
+		}
+
+		if (size.y != texture.getSize().y * this->getScale().y)
+		{
+			std::println("Height Resized!");
+		}
 	}
 };
 
@@ -301,7 +482,35 @@ void startScene()
 		}
 	);
 
-	//std::println();
+	splicedSprite.setScale
+	(
+		sf::Vector2f
+		{
+			0.5f,
+			0.5f
+		}
+	);
+
+	std::println("SplicedSprite SizeX: {}", splicedSprite.getSize().x);
+	std::println("SplicedSprite SizeY: {}", splicedSprite.getSize().y);
+
+	//splicedSprite.setSize
+	//(
+	//	sf::Vector2f
+	//	{
+	//		splicedSprite.,
+	//		0.5f
+	//	}
+	//);
+
+	splicedSprite.setSize
+	(
+		sf::Vector2f
+		{
+			500.f,
+			300.f
+		}
+	);
 
 	while (Asset::window().isOpen())
 	{
